@@ -1,4 +1,4 @@
-import { createUser, listAllUsers } from '../models/userModels.js';
+import { createUser, listAllUsers } from '../models/userModel.js';
 
 // Controlador para adicionar um usuário
 export const addUser = async (req, res) => {
