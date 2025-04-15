@@ -6,8 +6,8 @@ export const addUser = async (req, res) => {
     try {
         const userData = req.body;
 
-        // Validação de campos obrigatórios
         const missingFields = validateUserRequiredFields(userData);
+        
         if (missingFields.length > 0) {
             return res.status(400).json({
                 success: false,
@@ -45,14 +45,15 @@ export const addUser = async (req, res) => {
             });
         }
 
-        // Validação de senha
-        if (userData.senha.length < 8) {
+        // Validação completa de senha em uma única verificação
+        const senhaRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+        if (!senhaRegex.test(userData.senha)) {
             return res.status(400).json({
                 success: false,
                 message: 'Senha inválida',
                 details: {
                     field: 'senha',
-                    message: 'A senha deve ter no mínimo 8 caracteres'
+                    message: 'A senha deve conter no mínimo 8 caracteres, incluindo letra maiúscula, minúscula, número e caractere especial'
                 }
             });
         }
