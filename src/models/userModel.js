@@ -28,4 +28,29 @@ async function listAllUsers() {
     }
 }
 
-export { createUser, listAllUsers };
+
+/* Obtém usuário por e-mail pessoal */
+export async function getUserByEmail(email) {
+    return prisma.user.findUnique({
+        where: { emailPessoal: email },
+        include: { instituicoes: true }
+    });
+}
+
+/* Obtém usuário por e-mail institucional */
+export async function getUserByEmailInstitucional(email) {
+    return prisma.user.findUnique({
+        where: { emailInstitucional: email },
+        include: { instituicoes: true }
+    });
+}
+
+/* Obtém usuário por CPF */
+export async function getUserByCpf(cpf) {
+    return prisma.user.findUnique({
+        where: { cpf },
+        include: { instituicoes: true }
+    });
+}
+
+export { createUser, listAllUsers, getUserByCpf, getUserByEmailInstitucional };

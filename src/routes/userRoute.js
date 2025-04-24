@@ -1,12 +1,18 @@
 import express from 'express';
-import { addUser, getAllUsers } from '../controllers/userController.js';
+import {
+    addUser,
+    getAllUsers,
+    findUserByEmail,
+    findUserByEmailInstitucional,
+    findUserByCpf
+} from '../controllers/userController.js';
 
 const router = express.Router();
 
-// Rota para adicionar um usuário
 router.post('/users', addUser);
-
-// Rota para listar todos os usuários
 router.get('/users', getAllUsers);
+router.get('/users/email/:email', findUserByEmail);
+router.get('/users/email-institucional/:email', findUserByEmailInstitucional);
+router.get('/users/cpf/:cpf', findUserByCpf);
 
 export default router;

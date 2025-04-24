@@ -1,13 +1,11 @@
 import express from 'express';
-import userRoutes from './routes/userRoute.js';
+import userRoutes from './routes/userRoutes.js';
+import instituicaoRoutes from './routes/instituicaoRoutes.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
 app.use(express.json());
 
-app.use('api/v1',userRoutes);
+app.use('/api/v1', userRoutes);
+app.use('/api/v1', instituicaoRoutes);
 
-app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
-});
+app.listen(3000, () => console.log('API rodando em http://localhost:3000'));
