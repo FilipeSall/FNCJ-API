@@ -1,7 +1,7 @@
 import prisma from '../utils/prismaClient.js';
 
 // Função para criar um usuário
-async function createUser(userData) {
+export async function createUser(userData) {
     try {
         const user = await prisma.user.create({
             data: userData,
@@ -14,7 +14,7 @@ async function createUser(userData) {
 }
 
 // Função para listar todos os usuários
-async function listAllUsers() {
+export async function listAllUsers() {
     try {
         const users = await prisma.user.findMany({
             include: {
@@ -52,5 +52,3 @@ export async function getUserByCpf(cpf) {
         include: { instituicoes: true }
     });
 }
-
-export { createUser, listAllUsers, getUserByCpf, getUserByEmailInstitucional };
