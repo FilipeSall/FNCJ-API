@@ -4,10 +4,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "prebuild": "prisma generate",      
+    "build": "npm run prebuild",       
     "prisma:generate": "prisma generate",
     "dev": "npm run prisma:generate && nodemon src/index.js",
-    "start": "node src/index.js",
-    "postinstall": "prisma generate"
+    "start": "node src/index.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
