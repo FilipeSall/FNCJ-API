@@ -1,7 +1,5 @@
 import prisma from '../utils/prismaClient.js';
 import { parse } from 'date-fns';
-import prisma from '../utils/prismaClient.js';
-import { parse } from 'date-fns';
 
 // Função para criar um usuário
 export async function createUser(userData) {
