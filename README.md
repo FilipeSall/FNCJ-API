@@ -148,8 +148,8 @@ DELETE /api/v1/instituicoes/:id
 
 1. Clone o repositório:
    ```bash
-   git clone <URL-do-repositório>
-   cd <nome-do-projeto>
+   git clone git@github.com:FilipeSall/FNCJ-API.git
+   cd FNCJ-API
    ```
 2. Instale as dependências:
    ```bash
