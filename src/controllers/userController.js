@@ -8,19 +8,6 @@ import {
     deleteUserById
 } from '../models/userModel.js';
 import { validateUserRequiredFields } from '../utils/validateRequiredFields.js';
-import { validate as isUuid } from 'uuid'
-
-// POST /users
-import {
-    createUser,
-    listAllUsers,
-    getUserByEmail,
-    getUserByEmailInstitucional,
-    getUserByCpf,
-    updateUserById,
-    deleteUserById
-} from '../models/userModel.js';
-import { validateUserRequiredFields } from '../utils/validateRequiredFields.js';
 import { validate as isUuid } from 'uuid';
 import { parse, isValid } from 'date-fns';
 
