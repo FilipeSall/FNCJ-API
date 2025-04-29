@@ -6,6 +6,7 @@ async function main() {
         { nome: 'STF - Superior Tribunal Federal' },
         { nome: 'STJ - Superior Tribunal de Justiça' },  
         { nome: 'TSE - Tribunal Superior Eleitoral' }, 
+        { nome: 'SEAtecnologia'}
     ];
 
     for (const inst of instituicoes) {
