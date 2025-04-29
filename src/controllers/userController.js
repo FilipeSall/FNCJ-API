@@ -13,9 +13,15 @@ import { validate as isUuid } from 'uuid'
 // POST /users
 export const addUser = async (req, res) => {
     try {
+        console.log('Iniciando criação de usuário');
+        console.log('Dados recebidos:', req.body);
+        
         const userData = req.body;
 
+        // Log após validação dos campos obrigatórios
         const missingFields = validateUserRequiredFields(userData);
+        console.log('Campos faltantes:', missingFields);
+
         if (missingFields.length > 0) {
             return res.status(400).json({
                 success: false,
@@ -27,34 +33,13 @@ export const addUser = async (req, res) => {
             });
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(userData.emailPessoal)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Formato de e-mail inválido',
-                details: { field: 'emailPessoal' }
-            });
-        }
-
-        const cpfRegex = /^\d{11}$/;
-        if (!cpfRegex.test(userData.cpf.replace(/\D/g, ''))) {
-            return res.status(400).json({
-                success: false,
-                message: 'Formato de CPF inválido',
-                details: { field: 'cpf' }
-            });
-        }
-
-        const senhaRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
-        if (!senhaRegex.test(userData.senha)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Senha inválida',
-                details: { field: 'senha' }
-            });
-        }
+        // Log antes de criar o usuário
+        console.log('Dados validados, tentando criar usuário');
+        console.log('Dados para criação:', userData);
 
         const newUser = await createUser(userData);
+        console.log('Usuário criado com sucesso:', newUser);
+
         return res.status(201).json({
             success: true,
             message: 'Usuário criado com sucesso',
@@ -62,7 +47,12 @@ export const addUser = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Erro ao criar usuário:', error); 
+        console.error('Erro detalhado ao criar usuário:', {
+            message: error.message,
+            code: error.code,
+            stack: error.stack,
+            meta: error.meta
+        });
 
         if (error.code === 'P2002') {
             return res.status(409).json({
@@ -74,7 +64,7 @@ export const addUser = async (req, res) => {
                 }
             });
         }
-
+        
         if (error.message?.includes('Argument') && error.message?.includes('connect')) {
             return res.status(400).json({
                 success: false,

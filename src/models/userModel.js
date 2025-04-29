@@ -2,19 +2,49 @@ import prisma from '../utils/prismaClient.js';
 
 // Função para criar um usuário
 export async function createUser(userData) {
+    try {
+        console.log('Iniciando criação no modelo');
+        console.log('Dados recebidos no modelo:', userData);
 
-    const { instituicoes, ...rest } = userData;
+        const { instituicoes, ...rest } = userData;
 
-    const user = await prisma.user.create({
-        data: {
-            ...rest,
-            instituicoes: {
-                connect: instituicoes.map((id) => ({ id: Number(id) }))
-            }
-        },
-        include: { instituicoes: true }
-    });
-    return user;
+        // Verificar se instituicoes existe e é um array
+        if (!Array.isArray(instituicoes)) {
+            console.error('instituicoes não é um array:', instituicoes);
+            throw new Error('instituicoes deve ser um array de IDs');
+        }
+
+        console.log('Dados processados para criação:', {
+            rest,
+            instituicoesIds: instituicoes
+        });
+
+        // Converter a data de string para objeto Date
+        if (rest.dataNascimento) {
+            rest.dataNascimento = new Date(rest.dataNascimento);
+        }
+
+        const user = await prisma.user.create({
+            data: {
+                ...rest,
+                instituicoes: {
+                    connect: instituicoes.map((id) => ({ id: Number(id) }))
+                }
+            },
+            include: { instituicoes: true }
+        });
+
+        console.log('Usuário criado com sucesso no banco:', user);
+        return user;
+    } catch (error) {
+        console.error('Erro na criação do usuário no modelo:', {
+            message: error.message,
+            code: error.code,
+            stack: error.stack,
+            meta: error.meta
+        });
+        throw error;
+    }
 }
 
 // Função para listar todos os usuários
