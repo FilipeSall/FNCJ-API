@@ -14,12 +14,12 @@ datasource db {
 }
 
 model User {
-  id                 String        @id @default(uuid())
+  id                 String      @id @default(uuid())
   nome               String
   telefone           String
-  emailPessoal       String        @unique
-  emailInstitucional String        @unique
-  cpf                String        @unique
+  emailPessoal       String      @unique
+  emailInstitucional String      @unique
+  cpf                String      @unique
   rg                 String
   orgaoEmissorRG     String
   dataNascimento     DateTime
@@ -31,16 +31,17 @@ model User {
   numero             String
   complemento        String?
   senha              String
-  tipoUsuario        TipoUsuario   @default(NAO_FILIADO)
-  instituicoes       Instituicao[] @relation("UserInstituicoes")
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
+  tipoUsuario        TipoUsuario @default(NAO_FILIADO)
+  instituicaoId      Int
+  instituicao        Instituicao @relation(fields: [instituicaoId], references: [id])
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 }
 
 model Instituicao {
   id    Int    @id @default(autoincrement())
   nome  String @unique
-  users User[] @relation("UserInstituicoes")
+  users User[]
 }
 
 enum TipoUsuario {

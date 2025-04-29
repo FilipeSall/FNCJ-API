@@ -1,4 +1,7 @@
 import prisma from '../utils/prismaClient.js';
+import { parse } from 'date-fns';
+import prisma from '../utils/prismaClient.js';
+import { parse } from 'date-fns';
 
 // Função para criar um usuário
 export async function createUser(userData) {
@@ -6,36 +9,35 @@ export async function createUser(userData) {
         console.log('Iniciando criação no modelo');
         console.log('Dados recebidos no modelo:', userData);
 
-        const { instituicoes, ...rest } = userData;
+        const { instituicaoId, ...rest } = userData;
 
-        // Verificar se instituicoes existe e é um array
-        if (!Array.isArray(instituicoes)) {
-            console.error('instituicoes não é um array:', instituicoes);
-            throw new Error('instituicoes deve ser um array de IDs');
-        }
+        // Tratamento da data de nascimento
+        const dataNascimento = parse(rest.dataNascimento, 'yyyy-MM-dd', new Date());
 
-        console.log('Dados processados para criação:', {
-            rest,
-            instituicoesIds: instituicoes
-        });
+        // Limpeza de campos formatados
+        const cpfLimpo = rest.cpf.replace(/\D/g, '');
+        const cepLimpo = rest.cep.replace(/\D/g, '');
+        const telefoneLimpo = rest.telefone.replace(/\D/g, '');
 
-        // Converter a data de string para objeto Date
-        if (rest.dataNascimento) {
-            rest.dataNascimento = new Date(rest.dataNascimento);
-        }
+        const dadosProcessados = {
+            ...rest,
+            cpf: cpfLimpo,
+            cep: cepLimpo,
+            telefone: telefoneLimpo,
+            dataNascimento: dataNascimento,
+            instituicaoId: Number(instituicaoId)
+        };
+
+        console.log('Dados processados para criação:', dadosProcessados);
 
         const user = await prisma.user.create({
-            data: {
-                ...rest,
-                instituicoes: {
-                    connect: instituicoes.map((id) => ({ id: Number(id) }))
-                }
-            },
-            include: { instituicoes: true }
+            data: dadosProcessados,
+            include: { instituicao: true }
         });
 
         console.log('Usuário criado com sucesso no banco:', user);
         return user;
+
     } catch (error) {
         console.error('Erro na criação do usuário no modelo:', {
             message: error.message,
@@ -46,6 +48,7 @@ export async function createUser(userData) {
         throw error;
     }
 }
+
 
 // Função para listar todos os usuários
 export async function listAllUsers() {

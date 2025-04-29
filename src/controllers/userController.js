@@ -11,14 +11,27 @@ import { validateUserRequiredFields } from '../utils/validateRequiredFields.js';
 import { validate as isUuid } from 'uuid'
 
 // POST /users
+import {
+    createUser,
+    listAllUsers,
+    getUserByEmail,
+    getUserByEmailInstitucional,
+    getUserByCpf,
+    updateUserById,
+    deleteUserById
+} from '../models/userModel.js';
+import { validateUserRequiredFields } from '../utils/validateRequiredFields.js';
+import { validate as isUuid } from 'uuid';
+import { parse, isValid } from 'date-fns';
+
+// POST /users
 export const addUser = async (req, res) => {
     try {
         console.log('Iniciando criação de usuário');
-        console.log('Dados recebidos:', req.body);
-        
         const userData = req.body;
+        console.log('Dados recebidos:', userData);
 
-        // Log após validação dos campos obrigatórios
+        // Validação de campos obrigatórios
         const missingFields = validateUserRequiredFields(userData);
         console.log('Campos faltantes:', missingFields);
 
@@ -33,7 +46,61 @@ export const addUser = async (req, res) => {
             });
         }
 
-        // Log antes de criar o usuário
+        // Validação de e-mail
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(userData.emailPessoal)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Formato de e-mail pessoal inválido',
+                details: { field: 'emailPessoal' }
+            });
+        }
+
+        if (!emailRegex.test(userData.emailInstitucional)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Formato de e-mail institucional inválido',
+                details: { field: 'emailInstitucional' }
+            });
+        }
+
+        // Validação de CPF
+        const cpfLimpo = userData.cpf.replace(/\D/g, '');
+        if (cpfLimpo.length !== 11) {
+            return res.status(400).json({
+                success: false,
+                message: 'Formato de CPF inválido',
+                details: { field: 'cpf' }
+            });
+        }
+
+        // Validação de senha
+        const senhaRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+        if (!senhaRegex.test(userData.senha)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Senha inválida. Deve conter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um caractere especial',
+                details: { field: 'senha' }
+            });
+        }
+
+        // Validação da data de nascimento
+        const dataNascimento = parse(userData.dataNascimento, 'yyyy-MM-dd', new Date());
+        if (!isValid(dataNascimento)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Data de nascimento inválida',
+                details: { field: 'dataNascimento' }
+            });
+        }
+
+        // Validação de instituições
+        if (!userData.instituicoes || !Array.isArray(userData.instituicoes)) {
+            userData.instituicoes = [];
+        } else {
+            userData.instituicoes = userData.instituicoes.filter(id => id !== null);
+        }
+
         console.log('Dados validados, tentando criar usuário');
         console.log('Dados para criação:', userData);
 
@@ -64,17 +131,6 @@ export const addUser = async (req, res) => {
                 }
             });
         }
-        
-        if (error.message?.includes('Argument') && error.message?.includes('connect')) {
-            return res.status(400).json({
-                success: false,
-                message: 'Formato incorreto para relacionamento com "instituicoes". Esperado: { instituicoes: { connect: [{ id }] } }',
-                details: {
-                    suggestion: 'Certifique-se de enviar os IDs das instituições neste formato.',
-                    prismaMessage: error.message
-                }
-            });
-        }
 
         return res.status(500).json({
             success: false,
@@ -85,8 +141,8 @@ export const addUser = async (req, res) => {
             }
         });
     }
-
 };
+
 
 // GET /users
 export const getAllUsers = async (_req, res) => {
