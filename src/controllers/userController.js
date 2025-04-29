@@ -81,11 +81,13 @@ export const addUser = async (req, res) => {
             });
         }
 
-        // Validação de instituições
-        if (!userData.instituicoes || !Array.isArray(userData.instituicoes)) {
-            userData.instituicoes = [];
-        } else {
-            userData.instituicoes = userData.instituicoes.filter(id => id !== null);
+        // Validação de instituição
+        if (!userData.instituicaoId) {
+            return res.status(400).json({
+                success: false,
+                message: 'ID da instituição é obrigatório',
+                details: { field: 'instituicaoId' }
+            });
         }
 
         console.log('Dados validados, tentando criar usuário');
