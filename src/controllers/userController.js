@@ -8,6 +8,7 @@ import {
     deleteUserById
 } from '../models/userModel.js';
 import { validateUserRequiredFields } from '../utils/validateRequiredFields.js';
+import { validate as isUuid } from 'uuid'
 
 // POST /users
 export const addUser = async (req, res) => {
@@ -125,6 +126,9 @@ export const findUserByCpf = async (req, res) => {
 export const editUser = async (req, res) => {
     try {
         const { id } = req.params;
+        if (!isUuid(id)) {
+            return res.status(400).json({ success: false, message: 'ID inválidol.' });
+        }
         const data = req.body;
 
         if (!id) {
@@ -194,8 +198,8 @@ export const editUser = async (req, res) => {
 export const removeUser = async (req, res) => {
     try {
         const { id } = req.params;
-        if (!id) {
-            return res.status(400).json({ success: false, message: 'Parâmetro id é obrigatório' });
+        if (!isUuid(id || !id)) {
+            return res.status(400).json({ success: false, message: 'ID inválido, seu inútil.' });
         }
 
         await deleteUserById(id);

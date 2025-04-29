@@ -56,7 +56,7 @@ export async function getUserByCpf(cpf) {
 export async function updateUserById(id, dataToUpdate) {
     try {
         const user = await prisma.user.update({
-            where: { id: Number(id) },
+            where: { id },   
             data: dataToUpdate,
             include: { instituicoes: true }
         });
@@ -71,7 +71,7 @@ export async function updateUserById(id, dataToUpdate) {
 export async function deleteUserById(id) {
     try {
         const user = await prisma.user.delete({
-            where: { id: Number(id) }
+            where: { id }    
         });
         return user;
     } catch (error) {

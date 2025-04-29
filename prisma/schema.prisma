@@ -14,34 +14,34 @@ datasource db {
 }
 
 model User {
-  id                Int            @id @default(autoincrement())
-  nome              String
-  telefone          String
-  emailPessoal      String         @unique
+  id                 String        @id @default(uuid())
+  nome               String
+  telefone           String
+  emailPessoal       String        @unique
   emailInstitucional String        @unique
-  cpf               String         @unique
-  rg                String        
-  orgaoEmissorRG    String
-  ufEmissorRG       String
-  dataNascimento    DateTime
-  cep               String
-  uf                String
-  cidade            String
-  bairro            String
-  logradouro        String
-  numero            String
-  complemento       String?
-  senha             String
-  tipoUsuario       TipoUsuario    @default(NAO_FILIADO)
-  instituicoes      Instituicao[]  @relation("UserInstituicoes")
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
+  cpf                String        @unique
+  rg                 String
+  orgaoEmissorRG     String
+  ufEmissorRG        String
+  dataNascimento     DateTime
+  cep                String
+  uf                 String
+  cidade             String
+  bairro             String
+  logradouro         String
+  numero             String
+  complemento        String?
+  senha              String
+  tipoUsuario        TipoUsuario   @default(NAO_FILIADO)
+  instituicoes       Instituicao[] @relation("UserInstituicoes")
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
 }
 
 model Instituicao {
-  id        Int      @id @default(autoincrement())
-  nome      String   @unique
-  users     User[]   @relation("UserInstituicoes")
+  id    Int    @id @default(autoincrement())
+  nome  String @unique
+  users User[] @relation("UserInstituicoes")
 }
 
 enum TipoUsuario {

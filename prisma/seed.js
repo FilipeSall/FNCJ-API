@@ -15,13 +15,13 @@ async function main() {
             update: {},
             create: inst,
         });
-        console.log(`✔️ Instituição ${inst.nome} inserida/upserted.`);
+        console.log(`Instituição ${inst.nome} inserida/upserted.`);
     }
 }
 
 main()
     .catch(e => {
-        console.error('💥 Burro! Deu ruim no seed:', e);
+        console.error('Deu ruim no seed:', e);
         process.exit(1);
     })
     .finally(() => prisma.$disconnect());
