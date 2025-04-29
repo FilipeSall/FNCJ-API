@@ -28,8 +28,7 @@ export async function listAllUsers() {
     }
 }
 
-
-/* Obtém usuário por e-mail pessoal */
+// Obtém usuário por e-mail pessoal
 export async function getUserByEmail(email) {
     return prisma.user.findUnique({
         where: { emailPessoal: email },
@@ -37,7 +36,7 @@ export async function getUserByEmail(email) {
     });
 }
 
-/* Obtém usuário por e-mail institucional */
+// Obtém usuário por e-mail institucional
 export async function getUserByEmailInstitucional(email) {
     return prisma.user.findUnique({
         where: { emailInstitucional: email },
@@ -45,10 +44,38 @@ export async function getUserByEmailInstitucional(email) {
     });
 }
 
-/* Obtém usuário por CPF */
+// Obtém usuário por CPF
 export async function getUserByCpf(cpf) {
     return prisma.user.findUnique({
         where: { cpf },
         include: { instituicoes: true }
     });
+}
+
+// Atualiza um usuário pelo ID
+export async function updateUserById(id, dataToUpdate) {
+    try {
+        const user = await prisma.user.update({
+            where: { id: Number(id) },
+            data: dataToUpdate,
+            include: { instituicoes: true }
+        });
+        return user;
+    } catch (error) {
+        console.error('Error updating user:', error);
+        throw error;
+    }
+}
+
+// Deleta um usuário pelo ID
+export async function deleteUserById(id) {
+    try {
+        const user = await prisma.user.delete({
+            where: { id: Number(id) }
+        });
+        return user;
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        throw error;
+    }
 }
