@@ -62,7 +62,7 @@ export const addUser = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Erro ao criar usuário:', error); // loga pro console SEMPRE
+        console.error('Erro ao criar usuário:', error); 
 
         if (error.code === 'P2002') {
             return res.status(409).json({
