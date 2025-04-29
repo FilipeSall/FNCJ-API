@@ -21,6 +21,7 @@
 **Observações:**
 - O status do usuário é definido como **"NÃO_FILIADO"** por padrão no backend.
 - Esta é a única forma de criar usuários (não utilizar painel Liferay).
+- Hospedagem atual: **fncj-api-production.up.railway.app**
 
 ## ✅ Validações
 
