@@ -2,15 +2,19 @@ import prisma from '../utils/prismaClient.js';
 
 // Função para criar um usuário
 export async function createUser(userData) {
-    try {
-        const user = await prisma.user.create({
-            data: userData,
-        });
-        return user;
-    } catch (error) {
-        console.error('Error creating user:', error);
-        throw error;
-    }
+
+    const { instituicoes, ...rest } = userData;
+
+    const user = await prisma.user.create({
+        data: {
+            ...rest,
+            instituicoes: {
+                connect: instituicoes.map((id) => ({ id: Number(id) }))
+            }
+        },
+        include: { instituicoes: true }
+    });
+    return user;
 }
 
 // Função para listar todos os usuários
@@ -56,7 +60,7 @@ export async function getUserByCpf(cpf) {
 export async function updateUserById(id, dataToUpdate) {
     try {
         const user = await prisma.user.update({
-            where: { id },   
+            where: { id },
             data: dataToUpdate,
             include: { instituicoes: true }
         });
@@ -71,7 +75,7 @@ export async function updateUserById(id, dataToUpdate) {
 export async function deleteUserById(id) {
     try {
         const user = await prisma.user.delete({
-            where: { id }    
+            where: { id }
         });
         return user;
     } catch (error) {

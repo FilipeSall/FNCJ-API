@@ -62,15 +62,40 @@ export const addUser = async (req, res) => {
         });
 
     } catch (error) {
+        console.error('Erro ao criar usuário:', error); // loga pro console SEMPRE
+
         if (error.code === 'P2002') {
             return res.status(409).json({
                 success: false,
-                message: 'Conflito de dados únicos',
-                details: { field: error.meta?.target[0] }
+                message: 'Já existe um usuário com o mesmo valor em um campo único.',
+                details: {
+                    field: error.meta?.target?.[0] || 'campo desconhecido',
+                    prismaCode: error.code
+                }
             });
         }
-        return res.status(500).json({ success: false, message: 'Erro interno do servidor' });
+
+        if (error.message?.includes('Argument') && error.message?.includes('connect')) {
+            return res.status(400).json({
+                success: false,
+                message: 'Formato incorreto para relacionamento com "instituicoes". Esperado: { instituicoes: { connect: [{ id }] } }',
+                details: {
+                    suggestion: 'Certifique-se de enviar os IDs das instituições neste formato.',
+                    prismaMessage: error.message
+                }
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: 'Erro interno do servidor ao criar usuário.',
+            details: {
+                error: error.message,
+                stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+            }
+        });
     }
+
 };
 
 // GET /users
