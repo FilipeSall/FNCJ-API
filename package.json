@@ -6,7 +6,6 @@
   "scripts": {
     "prebuild": "prisma generate",      
     "build": "npm run prebuild",       
-    "prisma:generate": "prisma generate",
     "dev": "npm run prisma:generate && nodemon src/index.js",
     "start": "node src/index.js"
   },
@@ -21,11 +20,11 @@
     "@prisma/client": "^6.6.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "prisma": "^6.6.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "prisma": "^6.6.0"
   },
   "engines": {
     "node": ">=14.0.0"
