@@ -83,7 +83,7 @@
    ```
 5. Inicie o servidor:
    ```bash
-   npm start
+   npm run dev
    ```
 
 ---
