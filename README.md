@@ -18,7 +18,6 @@
 - `PUT /api/v1/instituicoes/:id` - Atualizar instituição
 - `DELETE /api/v1/instituicoes/:id` - Remover instituição
 
-```
 **Observações:**
 - O status do usuário é definido como **"NÃO_FILIADO"** por padrão no backend.
 - Esta é a única forma de criar usuários (não utilizar painel Liferay).
