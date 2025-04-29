@@ -22,7 +22,6 @@ model User {
   cpf                String        @unique
   rg                 String
   orgaoEmissorRG     String
-  ufEmissorRG        String
   dataNascimento     DateTime
   cep                String
   uf                 String

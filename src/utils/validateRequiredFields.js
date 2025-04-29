@@ -6,7 +6,6 @@ export const validateUserRequiredFields = (userData) => {
         cpf: 'CPF',
         rg: 'RG',
         orgaoEmissorRG: 'Órgão emissor do RG',
-        ufEmissorRG: 'UF do órgão emissor',
         dataNascimento: 'Data de nascimento',
         cep: 'CEP',
         uf: 'UF',
