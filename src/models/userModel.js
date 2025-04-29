@@ -49,7 +49,6 @@ export async function createUser(userData) {
     }
 }
 
-
 // Função para listar todos os usuários
 export async function listAllUsers() {
     try {
