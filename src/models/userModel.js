@@ -52,7 +52,7 @@ export async function listAllUsers() {
     try {
         const users = await prisma.user.findMany({
             include: {
-                instituicoes: true,
+                instituicao: true,
             },
         });
         return users;

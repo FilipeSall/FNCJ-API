@@ -132,17 +132,24 @@ export const addUser = async (req, res) => {
     }
 };
 
-
 // GET /users
 export const getAllUsers = async (_req, res) => {
     try {
         const users = await listAllUsers();
         return res.status(200).json({
             success: true,
-            data: { count: users.length, users }
+            data: {
+                count: users.length,
+                users
+            }
         });
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Erro ao listar usuários' });
+        console.error('[getAllUsers] Erro ao listar usuários:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Erro ao listar usuários',
+            details: { error: error.message }
+        });
     }
 };
 
