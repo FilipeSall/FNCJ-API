@@ -66,7 +66,7 @@ export async function listAllUsers() {
 export async function getUserByEmail(email) {
     return prisma.user.findUnique({
         where: { emailPessoal: email },
-        include: { instituicoes: true }
+        include: { instituicao: true }
     });
 }
 
@@ -74,7 +74,7 @@ export async function getUserByEmail(email) {
 export async function getUserByEmailInstitucional(email) {
     return prisma.user.findUnique({
         where: { emailInstitucional: email },
-        include: { instituicoes: true }
+        include: { instituicao: true }
     });
 }
 
@@ -82,7 +82,7 @@ export async function getUserByEmailInstitucional(email) {
 export async function getUserByCpf(cpf) {
     return prisma.user.findUnique({
         where: { cpf },
-        include: { instituicoes: true }
+        include: { instituicao: true }
     });
 }
 
@@ -92,7 +92,7 @@ export async function updateUserById(id, dataToUpdate) {
         const user = await prisma.user.update({
             where: { id },
             data: dataToUpdate,
-            include: { instituicoes: true }
+            include: { instituicao: true }
         });
         return user;
     } catch (error) {
