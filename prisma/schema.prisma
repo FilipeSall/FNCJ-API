@@ -8,21 +8,26 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Configuração do banco de dados SQLite
+// Em produção, considere utilizar PostgreSQL ou MySQL para melhor performance
 datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
 }
 
+// Modelo de usuário do sistema
+// Contém informações pessoais, de contato e de acesso
 model User {
-  id                 String      @id @default(uuid())
+  id                 String            @id @default(uuid())
   nome               String
   telefone           String
-  emailPessoal       String      @unique
-  emailInstitucional String      @unique
-  cpf                String      @unique
+  emailPessoal       String            @unique
+  emailInstitucional String            @unique
+  cpf                String            @unique
   rg                 String
   orgaoEmissorRG     String
   dataNascimento     DateTime
+  // Endereço do usuário
   cep                String
   uf                 String
   cidade             String
@@ -30,24 +35,149 @@ model User {
   logradouro         String
   numero             String
   complemento        String?
-  senha              String
-  tipoUsuario        TipoUsuario @default(NAO_FILIADO)
+  senha              String // Senha de acesso (deve ser armazenada com hash)
+  tipoUsuario        TipoUsuario       @default(NAO_FILIADO)
   instituicaoId      Int
-  instituicao        Instituicao @relation(fields: [instituicaoId], references: [id])
-  createdAt          DateTime    @default(now())
-  updatedAt          DateTime    @updatedAt
+  instituicao        Instituicao       @relation(fields: [instituicaoId], references: [id])
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  inscricoes         InscricaoEvento[]
 }
 
+// Modelo de instituição associada aos usuários
 model Instituicao {
   id    Int    @id @default(autoincrement())
   nome  String @unique
   users User[]
 }
 
+// Tipos de usuários permitidos no sistema
 enum TipoUsuario {
-  ADMINISTRADOR
-  NAO_FILIADO
-  FILIADO
-  JURADO
-  MEMBRO_COMISSAO
+  ADMINISTRADOR // Acesso administrativo ao sistema
+  NAO_FILIADO // Usuário comum sem filiação
+  FILIADO // Usuário filiado (preços diferenciados em eventos)
+  JURADO // Membro de júri para avaliações
+  MEMBRO_COMISSAO // Membro de comissão organizadora
+}
+
+// Modelo de Evento (ex: congressos, seminários, etc)
+model Evento {
+  id         String    @id @default(uuid())
+  nome       String
+  sigla      String?
+  dataInicio DateTime?
+  dataFim    DateTime?
+  cidade     String?
+  uf         String?
+  premioId   String?
+  premio     Premio?   @relation(fields: [premioId], references: [id])
+  completo   Boolean   @default(false)
+
+  // Informações de lotes de inscrição
+  vencimentoLote1 DateTime?
+  vencimentoLote2 DateTime?
+  vencimentoLote3 DateTime?
+
+  // Preços do 1º lote por categoria de usuário
+  precoLote1Filiado    Float? // Preço para filiados
+  precoLote1NaoFiliado Float? // Preço para não-filiados
+  precoLote1Estudante  Float? // Preço para estudantes
+
+  // Preços do 2º lote por categoria de usuário
+  precoLote2Filiado    Float? // Preço para filiados
+  precoLote2NaoFiliado Float? // Preço para não-filiados
+  precoLote2Estudante  Float? // Preço para estudantes
+
+  // Preços do 3º lote por categoria de usuário
+  precoLote3Filiado    Float? // Preço para filiados
+  precoLote3NaoFiliado Float? // Preço para não-filiados
+  precoLote3Estudante  Float? // Preço para estudantes
+
+  // Preços especiais para pagamento por empenho
+  precoEmpenhoFiliado    Float? // Preço para filiados (empenho)
+  precoEmpenhoNaoFiliado Float? // Preço para não-filiados (empenho)
+  precoEmpenhoEstudante  Float? // Preço para estudantes (empenho)
+
+  formasPagamentoEvento EventoFormaPagamento[]
+  limiteFiliacao        DateTime? 
+
+  // Links de pesquisa relacionados ao evento
+  linkPesquisaOpiniao    String? 
+  linkResultadosPesquisa String?
+
+  certificados Certificado[] 
+  inscricoes   InscricaoEvento[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt 
+}
+
+// Formas de pagamento disponíveis
+enum FormaPagamento {
+  PIX_DEPOSITO_TRANSFERENCIA // Pagamento via PIX, depósito ou transferência
+  EMPENHO // Pagamento via empenho (geralmente para órgãos públicos)
+}
+
+// Tabela de junção para relacionar eventos e formas de pagamento
+// Necessária porque SQLite não suporta arrays de enums
+model EventoFormaPagamento {
+  id             String         @id @default(uuid()) 
+  eventoId       String
+  evento         Evento         @relation(fields: [eventoId], references: [id], onDelete: Cascade)
+  formaPagamento FormaPagamento
+
+  @@unique([eventoId, formaPagamento])
+}
+
+// Modelo de Prêmio que pode ser vinculado a eventos
+model Premio {
+  id        String   @id @default(uuid())
+  nome      String 
+  edicao    String
+  eventos   Evento[]
+  completo  Boolean  @default(false) 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Modelo de Certificado para participantes de eventos
+model Certificado {
+  id          String          @id @default(uuid()) 
+  nome        String 
+  tipo        TipoCertificado
+  eventoId    String 
+  evento      Evento          @relation(fields: [eventoId], references: [id])
+  templateUrl String? 
+}
+
+// Tipos de certificados disponíveis
+enum TipoCertificado {
+  PARTICIPANTE 
+  CASE_FINALISTA 
+  JURADO 
+  MINISTRANTE 
+  MODERADOR
+}
+
+// Modelo para controle de inscrições de usuários em eventos
+model InscricaoEvento {
+  id              String          @id @default(uuid())
+  userId          String 
+  user            User            @relation(fields: [userId], references: [id])
+  eventoId        String 
+  evento          Evento          @relation(fields: [eventoId], references: [id])
+  dataInscricao   DateTime        @default(now()) 
+  statusPagamento StatusPagamento @default(PENDENTE) 
+  formaPagamento  FormaPagamento?
+  valorPago       Float? 
+  lote            Int? 
+
+  @@unique([userId, eventoId]) 
+}
+
+// Status possíveis para pagamento de inscrições
+enum StatusPagamento {
+  PENDENTE
+  CONFIRMADO
+  CANCELADO 
 }
