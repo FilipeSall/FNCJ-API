@@ -35,7 +35,7 @@ model User {
   logradouro         String
   numero             String
   complemento        String?
-  senha              String // Senha de acesso (deve ser armazenada com hash)
+  senha              String
   tipoUsuario        TipoUsuario       @default(NAO_FILIADO)
   instituicaoId      Int
   instituicao        Instituicao       @relation(fields: [instituicaoId], references: [id])
@@ -99,17 +99,17 @@ model Evento {
   precoEmpenhoEstudante  Float? // Preço para estudantes (empenho)
 
   formasPagamentoEvento EventoFormaPagamento[]
-  limiteFiliacao        DateTime? 
+  limiteFiliacao        DateTime?
 
   // Links de pesquisa relacionados ao evento
-  linkPesquisaOpiniao    String? 
+  linkPesquisaOpiniao    String?
   linkResultadosPesquisa String?
 
-  certificados Certificado[] 
+  certificados Certificado[]
   inscricoes   InscricaoEvento[]
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt 
+  updatedAt DateTime @updatedAt
 }
 
 // Formas de pagamento disponíveis
@@ -121,7 +121,7 @@ enum FormaPagamento {
 // Tabela de junção para relacionar eventos e formas de pagamento
 // Necessária porque SQLite não suporta arrays de enums
 model EventoFormaPagamento {
-  id             String         @id @default(uuid()) 
+  id             String         @id @default(uuid())
   eventoId       String
   evento         Evento         @relation(fields: [eventoId], references: [id], onDelete: Cascade)
   formaPagamento FormaPagamento
@@ -132,52 +132,52 @@ model EventoFormaPagamento {
 // Modelo de Prêmio que pode ser vinculado a eventos
 model Premio {
   id        String   @id @default(uuid())
-  nome      String 
+  nome      String
   edicao    String
   eventos   Evento[]
-  completo  Boolean  @default(false) 
+  completo  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 // Modelo de Certificado para participantes de eventos
 model Certificado {
-  id          String          @id @default(uuid()) 
-  nome        String 
+  id          String          @id @default(uuid())
+  nome        String
   tipo        TipoCertificado
-  eventoId    String 
+  eventoId    String
   evento      Evento          @relation(fields: [eventoId], references: [id])
-  templateUrl String? 
+  templateUrl String?
 }
 
 // Tipos de certificados disponíveis
 enum TipoCertificado {
-  PARTICIPANTE 
-  CASE_FINALISTA 
-  JURADO 
-  MINISTRANTE 
+  PARTICIPANTE
+  CASE_FINALISTA
+  JURADO
+  MINISTRANTE
   MODERADOR
 }
 
 // Modelo para controle de inscrições de usuários em eventos
 model InscricaoEvento {
   id              String          @id @default(uuid())
-  userId          String 
+  userId          String
   user            User            @relation(fields: [userId], references: [id])
-  eventoId        String 
+  eventoId        String
   evento          Evento          @relation(fields: [eventoId], references: [id])
-  dataInscricao   DateTime        @default(now()) 
-  statusPagamento StatusPagamento @default(PENDENTE) 
+  dataInscricao   DateTime        @default(now())
+  statusPagamento StatusPagamento @default(PENDENTE)
   formaPagamento  FormaPagamento?
-  valorPago       Float? 
-  lote            Int? 
+  valorPago       Float?
+  lote            Int?
 
-  @@unique([userId, eventoId]) 
+  @@unique([userId, eventoId])
 }
 
 // Status possíveis para pagamento de inscrições
 enum StatusPagamento {
   PENDENTE
   CONFIRMADO
-  CANCELADO 
+  CANCELADO
 }

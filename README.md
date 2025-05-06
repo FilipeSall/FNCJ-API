@@ -18,6 +18,9 @@
 - `PUT /api/v1/instituicoes/:id` - Atualizar instituição
 - `DELETE /api/v1/instituicoes/:id` - Remover instituição
 
+### 🎭 Eventos
+- `POST /api/v1/eventos` - Criar instituição
+
 **Observações:**
 - O status do usuário é definido como **"NÃO_FILIADO"** por padrão no backend.
 - Hospedagem atual: **fncj-api-production.up.railway.app**
