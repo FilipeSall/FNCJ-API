@@ -157,11 +157,10 @@ enum TipoCertificado {
   MODERADOR
 }
 
-// Modelo para controle de inscrições de usuários em eventos
 model InscricaoEvento {
   id              String          @id @default(uuid())
-  userId          String
-  user            User            @relation(fields: [userId], references: [id])
+  userId          String?         // Opcional com ?
+  // user            User?           @relation(fields: [userId], references: [id])  // Comente ou remova esta linha
   eventoId        String
   evento          Evento          @relation(fields: [eventoId], references: [id])
   dataInscricao   DateTime        @default(now())
@@ -170,7 +169,7 @@ model InscricaoEvento {
   valorPago       Float?
   lote            Int?
 
-  @@unique([userId, eventoId])
+  // @@unique([userId, eventoId])
 }
 
 // Status possíveis para pagamento de inscrições
