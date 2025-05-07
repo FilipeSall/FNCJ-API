@@ -14,15 +14,12 @@ datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
 }
-
-// Modelo de usuário do sistema
-// Contém informações pessoais, de contato e de acesso
 model User {
   id                 String            @id @default(uuid())
   nome               String
   telefone           String
   emailPessoal       String            @unique
-  emailInstitucional String            @unique
+  emailInstitucional String?           @unique  
   cpf                String            @unique
   rg                 String
   orgaoEmissorRG     String
@@ -41,7 +38,8 @@ model User {
   instituicao        Instituicao       @relation(fields: [instituicaoId], references: [id])
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
-  inscricoes         InscricaoEvento[]
+  // Remover a linha abaixo para desativar a vinculação com inscrições
+  // inscricoes         InscricaoEvento[]
 }
 
 // Modelo de instituição associada aos usuários
