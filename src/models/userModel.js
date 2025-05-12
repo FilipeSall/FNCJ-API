@@ -11,6 +11,7 @@ export async function createUser(userData) {
 
         // Tratamento da data de nascimento
         const dataNascimento = parse(rest.dataNascimento, 'yyyy-MM-dd', new Date());
+        const dataExpedicaoRG = parse(rest.dataExpedicaoRG, 'yyyy-MM-dd', new Date());
 
         // Limpeza de campos formatados
         const cpfLimpo = rest.cpf.replace(/\D/g, '');
@@ -23,6 +24,7 @@ export async function createUser(userData) {
             cep: cepLimpo,
             telefone: telefoneLimpo,
             dataNascimento: dataNascimento,
+            dataExpedicaoRG: dataExpedicaoRG,
             instituicaoId: Number(instituicaoId)
         };
 

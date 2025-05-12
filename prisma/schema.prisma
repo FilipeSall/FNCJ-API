@@ -24,6 +24,7 @@ model User {
   cpf                String      @unique
   rg                 String
   orgaoEmissorRG     String
+  dataExpedicaoRG    DateTime
   dataNascimento     DateTime
   // Endereço do usuário
   cep                String
