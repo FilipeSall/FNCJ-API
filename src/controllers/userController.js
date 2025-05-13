@@ -10,6 +10,7 @@ import {
 import { validateUserRequiredFields } from '../utils/validateRequiredFields.js';
 import { validate as isUuid } from 'uuid';
 import { parse, isValid } from 'date-fns';
+import bcrypt from 'bcrypt'; 
 
 // POST /users
 export const addUser = async (req, res) => {
@@ -90,16 +91,33 @@ export const addUser = async (req, res) => {
             });
         }
 
-        console.log('Dados validados, tentando criar usuário');
-        console.log('Dados para criação:', userData);
+        // Hash da senha antes de enviar para o model
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(userData.senha, saltRounds);
+        
+        // Cria uma cópia dos dados com a senha hasheada
+        const userDataWithHash = {
+            ...userData,
+            senha: hashedPassword
+        };
 
-        const newUser = await createUser(userData);
-        console.log('Usuário criado com sucesso:', newUser);
+        console.log('Dados validados, tentando criar usuário');
+        console.log('Dados para criação (senha protegida):', {
+            ...userDataWithHash,
+            senha: '[PROTEGIDO]' // Não log a senha hasheada
+        });
+
+        const newUser = await createUser(userDataWithHash);
+        
+        // Remove a senha do objeto de resposta
+        const { senha, ...userWithoutPassword } = newUser;
+        
+        console.log('Usuário criado com sucesso');
 
         return res.status(201).json({
             success: true,
             message: 'Usuário criado com sucesso',
-            user: newUser
+            user: userWithoutPassword // Retorna sem expor a senha
         });
 
     } catch (error) {
@@ -131,7 +149,6 @@ export const addUser = async (req, res) => {
         });
     }
 };
-
 // GET /users
 export const getAllUsers = async (_req, res) => {
     try {
