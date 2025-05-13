@@ -7,7 +7,15 @@ export async function createUser(userData) {
         console.log('Iniciando criação no modelo');
         console.log('Dados recebidos no modelo:', userData);
 
-        const { instituicaoId, ...rest } = userData;
+        const { 
+            instituicaoId, 
+            email,
+            confirmarSenha, 
+            newsletter, 
+            frequenciaNewsletter,
+            ...rest 
+        } = userData;
+
 
         // Tratamento da data de nascimento
         const dataNascimento = parse(rest.dataNascimento, 'yyyy-MM-dd', new Date());
