@@ -9,6 +9,7 @@ export async function createUser(userData) {
 
         const { 
             instituicaoId, 
+            instituicao,
             email,
             confirmarSenha, 
             newsletter, 
