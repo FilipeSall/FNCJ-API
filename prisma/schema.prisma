@@ -26,6 +26,7 @@ model User {
   numero             String
   complemento        String?
   senha              String
+  image              String            @default("https://firebasestorage.googleapis.com/v0/b/linko-52873.appspot.com/o/Ellipse%204.svg?alt=media&token=4c2a893b-a79b-4fb1-9f35-a574d4a73338")
   tipoUsuario        String            @default("NAO_FILIADO")
   instituicaoId      Int
   createdAt          DateTime          @default(now())
